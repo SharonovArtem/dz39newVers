@@ -6,45 +6,40 @@ namespace dzkurs
     {
         static void Main(string[] args)
         {
+            Database database = new Database();
             Player player = new Player(0, null, 0, false);
             bool isWorking = true;
-            string addPlayerCommand = "1";
-            string banPlayerCommand = "2";
-            string unbanPlayerCommand = "3";
-            string removePlayerCommand = "4";
-            string showAllPlayersCommand = "5";
-            string command;
+            ConsoleKeyInfo key;
 
             while (isWorking)
             {
                 Console.WriteLine("Введите команду");
-                Console.WriteLine($"Создать игрока - 1");
-                Console.WriteLine($"Забанить игрока - 2");
-                Console.WriteLine($"Разбанить игрока - 3");
-                Console.WriteLine($"удалить игрока - 4");
-                Console.WriteLine($"Показать всех игроков - 5");
+                Console.WriteLine($"Создать игрока - Q");
+                Console.WriteLine($"Забанить игрока - W");
+                Console.WriteLine($"Разбанить игрока - E");
+                Console.WriteLine($"удалить игрока - R");
+                Console.WriteLine($"Показать всех игроков - T");
+                key = Console.ReadKey(true);
 
-                command = Console.ReadLine();
-
-                if (command == addPlayerCommand)
+                if (key.Key == ConsoleKey.Q)
                 {
-                    player.AddNewPlayer();
+                    database.AddNewPlayer();
                 }
-                else if (command == banPlayerCommand)
+                else if (key.Key == ConsoleKey.W)
                 {
-                    player.BanPlayer();
+                    player.Ban(database);
                 }
-                else if (command == unbanPlayerCommand)
+                else if (key.Key == ConsoleKey.E)
                 {
-                    player.UnbanPlayer();
+                    player.Unban(database);
                 }
-                else if (command == removePlayerCommand)
-                {                    
-                    player.RemovePlayer();
+                else if (key.Key == ConsoleKey.R)
+                {
+                    database.RemovePlayer();
                 }
-                else if (command == showAllPlayersCommand)
-                {                   
-                    player.ShowAllPlayers();
+                else if (key.Key == ConsoleKey.T)
+                {
+                    database.ShowAllPlayers();
                 }
                 else
                 {
@@ -55,47 +50,23 @@ namespace dzkurs
     }
 
     class Player
-    {
+    {       
+        public Player(int id, string name, int level, bool isBanned)
+        {
+            Id = id;
+            Name = name;
+            Level = level;
+            IsBanned = isBanned;
+        }
+
         public int Id { get; private set; }
         public string Name { get; private set; }
         public int Level { get; private set; }
         public bool IsBanned { get; private set; }
 
-        List<Player> Players = new List<Player>();
-        int IdNumber = 1;
-
-        public Player(int id, string name, int level, bool banFlag)
+        public Database Ban(Database database)
         {
-            Id = id;
-            Name = name;
-            Level = level;
-            IsBanned = banFlag;
-        }
-
-        public List<Player> AddNewPlayer()
-        {
-            Player player = new Player(0, null, 0, false);
-
-            string userInput;
-
-            Console.WriteLine("Введите имя игроку");
-            userInput = Console.ReadLine();
-
-            player.Name = userInput;
-            player.Id = IdNumber;
-            player.Level = 1;
-            player.IsBanned = false;
-
-            Players.Add(player);
-
-            Console.WriteLine($"Игрок {player.Name} добавлен");
-            IdNumber++;
-
-            return Players;
-        }
-
-        public void BanPlayer()
-        {
+            
             string userInput;
             int tempNumber = 0;
 
@@ -103,27 +74,28 @@ namespace dzkurs
 
             userInput = Console.ReadLine();
 
-            for (int i = 0; i < Players.Count; i++)
+            for (int i = 0; i < database.Players.Count; i++)
             {
-                if (Convert.ToString(Players[i].Id) == userInput && Players[i].IsBanned == false)
+                if (database.Players[i].Id == Convert.ToInt32(userInput) && database.Players[i].IsBanned == false)
                 {
-                    tempNumber = i;
+                    tempNumber = database.Players[i].Id;
                     break;
                 }
             }
 
-            if (tempNumber != 0)
+            if (database.Players != null)
             {
-                Players[tempNumber].IsBanned = true;
-                Console.WriteLine($"Игрок {Players[tempNumber].Name} забанен!");
+                database.Players[tempNumber].IsBanned = true;
+                Console.WriteLine($"Игрок {database.Players[tempNumber].Name} забанен!");
             }
             else
             {
                 Console.WriteLine("Не удалось никого забанить:(");
             }
+            return database;
         }
 
-        public void UnbanPlayer()
+        public Database Unban(Database database)
         {
             string userInput;
             int tempNumber = 0;
@@ -132,35 +104,28 @@ namespace dzkurs
 
             userInput = Console.ReadLine();
 
-            for (int i = 0; i < Players.Count; i++)
+            for (int i = 0; i < database.Players.Count; i++)
             {
-                if (Convert.ToString(Players[i].Id) == userInput && Players[i].IsBanned == true)
+                if (Convert.ToString(database.Players[i].Id) == userInput && database.Players[i].IsBanned == true)
                 {
-                    tempNumber = i;
+                    tempNumber = database.Players[i].Id;
                     break;
                 }
             }
 
-            if (tempNumber != 0)
+            if (database.Players != null)
             {
-                Players[tempNumber].IsBanned = false;
-                Console.WriteLine($"Игрок {Players[tempNumber].Name} разбанен!");
+                database.Players[tempNumber].IsBanned = false;
+                Console.WriteLine($"Игрок {database.Players[tempNumber].Name} разбанен!");
             }
             else
             {
                 Console.WriteLine("Не получается никого разбанить:(");
             }
+            return database;
         }
 
-        public void ShowAllPlayers()
-        {
-            for (int i = 0; i < Players.Count; i++)
-            {
-                Players[i].ShowInfoAboutPlayer(Players[i].Id, Players[i].Name, Players[i].Level, Players[i].IsBanned);
-            }
-        }
-
-        public void ShowInfoAboutPlayer(int id, string name, int level, bool banFlag)
+        public void ShowInfo(int id, string name, int level, bool banFlag)
         {
             Console.WriteLine("ID игрока: " + id);
             Console.WriteLine("Имя игрока: " + name);
@@ -174,6 +139,38 @@ namespace dzkurs
                 Console.WriteLine("забанен ли игрок: да");
             }
         }
+    }
+
+    class Database
+    {
+        public List<Player> Players { get; private set; } = new List<Player>();
+        public Player Player { get; private set; } = new Player(0, null, 0, false);
+        public int IdNumber { get; private set; } = 0;
+
+        public List<Player> AddNewPlayer()
+        {
+            string userInput;
+
+            Console.WriteLine("Введите имя игроку");
+            userInput = Console.ReadLine();
+
+            Player player = new Player(IdNumber, userInput, 0, false);
+
+            Players.Add(player);
+
+            Console.WriteLine($"Игрок {player.Name} добавлен");
+            IdNumber++;
+
+            return Players;
+        }
+        
+        public void ShowAllPlayers()
+        {
+            for (int i = 0; i < Players.Count; i++)
+            {
+                Players[i].ShowInfo(Players[i].Id, Players[i].Name, Players[i].Level, Players[i].IsBanned);
+            }
+        }       
 
         public List<Player> RemovePlayer()
         {
