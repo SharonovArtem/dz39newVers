@@ -68,6 +68,7 @@ namespace dzkurs
             Console.WriteLine("ID игрока: " + Id);
             Console.WriteLine("Имя игрока: " + Name);
             Console.WriteLine("Уровень игрока: " + Level);
+
             if (IsBanned == false)
             {
                 Console.WriteLine("забанен ли игрок: нет");
@@ -92,12 +93,10 @@ namespace dzkurs
     class Database
     {
         private List<Player> _players = new List<Player>();
-        public Player Player { get; private set; } = new Player(0, null, 0, false);
         public int IdNumber { get; private set; } = 0;
 
         public void Ban()
         {
-
             string userInput;
             int tempNumber = 0;
 
@@ -127,30 +126,34 @@ namespace dzkurs
 
         public void Unban()
         {
-            int userInput;
+            string userInput;
             int tempNumber = 0;
+            int value;
 
             Console.WriteLine("Введите ID игрока");
 
-            userInput = Convert.ToInt32(Console.ReadLine());
-
-            for (int i = 0; i < _players.Count; i++)
+            userInput = Console.ReadLine();
+            
+            if (int.TryParse(userInput, out value))
             {
-                if (_players[i].Id == userInput && _players[i].IsBanned == true)
+                for (int i = 0; i < _players.Count; i++)
                 {
-                    tempNumber = _players[i].Id;
-                    break;
+                    if (_players[i].Id == value && _players[i].IsBanned == true)
+                    {
+                        tempNumber = _players[i].Id;
+                        break;
+                    }
                 }
-            }
 
-            if (_players != null)
-            {
-                _players[tempNumber].Unban();
-                Console.WriteLine($"Игрок {_players[tempNumber].Name} разбанен!");
-            }
-            else
-            {
-                Console.WriteLine("Не получается никого разбанить:(");
+                if (_players != null)
+                {
+                    _players[tempNumber].Unban();
+                    Console.WriteLine($"Игрок {_players[tempNumber].Name} разбанен!");
+                }
+                else
+                {
+                    Console.WriteLine("Не получается никого разбанить:(");
+                }
             }
         }
 
@@ -180,17 +183,25 @@ namespace dzkurs
         public void RemovePlayer()
         {
             string userInput;
+            int value;
 
             Console.WriteLine("Введите ID игрока");
             userInput = Console.ReadLine();
 
-            for (int i = 0; i < _players.Count; i++)
+            if (int.TryParse(userInput, out value))
             {
-                if (Convert.ToString(_players[i].Id) == userInput)
+                for (int i = 0; i < _players.Count; i++)
                 {
-                    Console.WriteLine($"Игрок {_players[i].Name} удалён!");
-                    _players.Remove(_players[i]);
+                    if (_players[i].Id == value)
+                    {
+                        Console.WriteLine($"Игрок {_players[i].Name} удалён!");
+                        _players.Remove(_players[i]);
+                    }
                 }
+            }
+            else
+            {
+                Console.WriteLine("Ошибка ввода!");
             }
         }
     }
