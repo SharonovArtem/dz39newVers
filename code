@@ -9,6 +9,11 @@ namespace dzkurs
             Database database = new Database();
             bool isWorking = true;
             ConsoleKeyInfo key;
+            ConsoleKey keyQ = ConsoleKey.Q;
+            ConsoleKey keyW = ConsoleKey.W;
+            ConsoleKey keyE = ConsoleKey.E;
+            ConsoleKey keyR = ConsoleKey.R;
+            ConsoleKey keyT = ConsoleKey.T;
 
             while (isWorking)
             {
@@ -20,23 +25,23 @@ namespace dzkurs
                 Console.WriteLine($"Показать всех игроков - T");
                 key = Console.ReadKey(true);
 
-                if (key.Key == ConsoleKey.Q)
+                if (key.Key == keyQ)
                 {
                     database.AddNewPlayer();
                 }
-                else if (key.Key == ConsoleKey.W)
+                else if (key.Key == keyW)
                 {
-                    database.Ban();
+                    database.BanPlayer();
                 }
-                else if (key.Key == ConsoleKey.E)
+                else if (key.Key == keyE)
                 {
-                    database.Unban();
+                    database.UnbanPlayer();
                 }
-                else if (key.Key == ConsoleKey.R)
+                else if (key.Key == keyR)
                 {
                     database.RemovePlayer();
                 }
-                else if (key.Key == ConsoleKey.T)
+                else if (key.Key == keyT)
                 {
                     database.ShowAllPlayers();
                 }
@@ -92,38 +97,12 @@ namespace dzkurs
 
     class Database
     {
-        private List<Player> _players = new List<Player>();
-        public int IdNumber { get; private set; } = 0;
-
-        private bool TryGetPlayer(string userInput, int tempNumber)
-        {
-            bool isFound = false;
-            Console.WriteLine("Введите ID игрока");
-            int value;
-
-            userInput = Console.ReadLine();
-            
-            int.TryParse(userInput, out value);
-
-            for (int i = 0; i < _players.Count; i++)
-            {
-                if (_players[i].Id == value)
-                {
-                    isFound = true;
-                    tempNumber = _players[i].Id;
-                    break;
-                }
-            }
-
-            return isFound;
-        }
-
-        public void Ban()
+        public void BanPlayer()
         {
             string userInput = null;
             int tempNumber = 0;
 
-            if (TryGetPlayer(userInput, tempNumber))
+            if (TryGetPlayer(out _player, userInput, tempNumber))
             {
                 _players[tempNumber].Ban();
                 Console.WriteLine($"Игрок {_players[tempNumber].Name} забанен!");
@@ -134,12 +113,12 @@ namespace dzkurs
             }
         }
 
-        public void Unban()
+        public void UnbanPlayer()
         {
             string userInput = null;
             int tempNumber = 0;
 
-            if (TryGetPlayer(userInput, tempNumber))
+            if (TryGetPlayer(out _player, userInput, tempNumber))
             {
                 _players[tempNumber].Unban();
                 Console.WriteLine($"Игрок {_players[tempNumber].Name} разбанен!");
@@ -157,12 +136,12 @@ namespace dzkurs
             Console.WriteLine("Введите имя игроку");
             userInput = Console.ReadLine();
 
-            Player player = new Player(IdNumber, userInput, 0, false);
+            Player player = new Player(_IdNumber, userInput, 0, false);
 
             _players.Add(player);
 
             Console.WriteLine($"Игрок {player.Name} добавлен");
-            IdNumber++;
+            _IdNumber++;
         }
 
         public void ShowAllPlayers()
@@ -178,15 +157,44 @@ namespace dzkurs
             string userInput = null;
             int tempNumber = 0;
 
-            if (TryGetPlayer(userInput, tempNumber))
+            if (TryGetPlayer(out _player, userInput, tempNumber))
             {
                 Console.WriteLine($"Игрок {_players[tempNumber].Name} удалён!");
                 _players.Remove(_players[tempNumber]);
-            }            
+            }
             else
             {
                 Console.WriteLine("Ошибка ввода!");
             }
+        }
+
+        private List<Player> _players = new List<Player>();
+        private int _IdNumber = 0;
+        private Player _player = new Player(0, null, 0, false);
+
+        private bool TryGetPlayer(out Player player, string userInput, int tempNumber)
+        {
+            player = null;
+            bool isFound = false;
+            Console.WriteLine("Введите ID игрока");
+            int value;
+
+            userInput = Console.ReadLine();
+
+            int.TryParse(userInput, out value);
+
+            for (int i = 0; i < _players.Count; i++)
+            {
+                if (_players[i].Id == value)
+                {
+                    isFound = true;
+                    tempNumber = _players[i].Id;
+                    player = _players[i];
+                    break;
+                }
+            }
+
+            return isFound;
         }
     }
 }
