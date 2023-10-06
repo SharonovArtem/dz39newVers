@@ -99,18 +99,14 @@ namespace dzkurs
     class Database
     {
         private List<Player> _players = new List<Player>();
-        private int _IdNumber = 0;
+        private int _idNumber = 0;
 
         public void BanPlayer()
         {
-            Player player = new Player(0, null, 0, false);
-            string userInput = null;
-            int tempNumber = 0;
-
-            if (_tryGetPlayer(out player))
+            if (_TryGetPlayer(out Player player))
             {
-                _players[tempNumber].Ban();
-                Console.WriteLine($"Игрок {_players[tempNumber].Name} забанен!");
+                player.Ban();
+                Console.WriteLine($"Игрок {player.Name} забанен!");
             }
             else
             {
@@ -120,14 +116,10 @@ namespace dzkurs
 
         public void UnbanPlayer()
         {
-            Player player = new Player(0, null, 0, false);
-            string userInput = null;
-            int tempNumber = 0;
-
-            if (_tryGetPlayer(out player))
+            if (_TryGetPlayer(out Player player))
             {
-                _players[tempNumber].Unban();
-                Console.WriteLine($"Игрок {_players[tempNumber].Name} разбанен!");
+                player.Unban();
+                Console.WriteLine($"Игрок {player.Name} разбанен!");
             }
             else
             {
@@ -142,12 +134,12 @@ namespace dzkurs
             Console.WriteLine("Введите имя игроку");
             userInput = Console.ReadLine();
 
-            Player player = new Player(_IdNumber, userInput, 0, false);
+            Player player = new Player(_idNumber, userInput, 0, false);
 
             _players.Add(player);
 
             Console.WriteLine($"Игрок {player.Name} добавлен");
-            _IdNumber++;
+            _idNumber++;
         }
 
         public void ShowAllPlayers()
@@ -164,7 +156,7 @@ namespace dzkurs
             string userInput = null;
             int tempNumber = 0;
 
-            if (_tryGetPlayer(out player))
+            if (_TryGetPlayer(out player))
             {
                 Console.WriteLine($"Игрок {_players[tempNumber].Name} удалён!");
                 _players.Remove(_players[tempNumber]);
@@ -175,12 +167,12 @@ namespace dzkurs
             }
         }
         
-        private bool _tryGetPlayer(out Player player)
+        private bool _TryGetPlayer(out Player player)
         {
             string userInput;
             int tempNumber;
             player = null;
-            bool isFound = false;
+            bool isFound = true;
             Console.WriteLine("Введите ID игрока");
             int value;
 
@@ -195,7 +187,7 @@ namespace dzkurs
                     isFound = true;
                     tempNumber = _players[i].Id;
                     player = _players[i];
-                    break;
+                    return true;
                 }
             }
 
