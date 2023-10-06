@@ -74,14 +74,15 @@ namespace dzkurs
             Console.WriteLine("ID игрока: " + Id);
             Console.WriteLine("Имя игрока: " + Name);
             Console.WriteLine("Уровень игрока: " + Level);
+            Console.Write("забанен ли игрок: ");
 
             if (IsBanned == false)
             {
-                Console.WriteLine("забанен ли игрок: нет");
+                Console.Write("нет\n");
             }
             else
             {
-                Console.WriteLine("забанен ли игрок: да");
+                Console.Write("да\n");
             }
         }
 
@@ -129,10 +130,8 @@ namespace dzkurs
 
         public void AddNewPlayer()
         {
-            string userInput;
-
             Console.WriteLine("Введите имя игроку");
-            userInput = Console.ReadLine();
+            string userInput = userInput = Console.ReadLine();
 
             Player player = new Player(_idNumber, userInput, 0, false);
 
@@ -152,12 +151,12 @@ namespace dzkurs
 
         public void RemovePlayer()
         {
-            Player player = new Player(0, null, 0, false);
+            Player player = null;
 
             if (TryGetPlayer(out player))
             {
-                Console.WriteLine($"Игрок {player.Name} удалён!");
                 _players.Remove(player);
+                Console.WriteLine($"Игрок {player.Name} удалён!");
             }
             else
             {
@@ -167,22 +166,22 @@ namespace dzkurs
 
         private bool TryGetPlayer(out Player player)
         {
-            string userInput;
             Console.WriteLine("Введите ID игрока");
-            bool isFound = false;
-            int value;
 
-            userInput = Console.ReadLine();
+            string userInput = Console.ReadLine();
 
-            int.TryParse(userInput, out value);
+            bool isFound = true;
             player = new Player(0, null, 0, false);
 
-            for (int i = 0; i < _players.Count; i++)
+            if (int.TryParse(userInput, out int value) == isFound)
             {
-                if (_players[i].Id == value)
+                for (int i = 0; i < _players.Count; i++)
                 {
-                    player = _players[i];
-                    isFound = true;
+                    if (_players[i].Id == value)
+                    {
+                        player = _players[i];
+                        break;
+                    }
                 }
             }
 
