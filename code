@@ -103,7 +103,7 @@ namespace dzkurs
 
         public void BanPlayer()
         {
-            if (_TryGetPlayer(out Player player))
+            if (TryGetPlayer(out Player player))
             {
                 player.Ban();
                 Console.WriteLine($"Игрок {player.Name} забанен!");
@@ -116,7 +116,7 @@ namespace dzkurs
 
         public void UnbanPlayer()
         {
-            if (_TryGetPlayer(out Player player))
+            if (TryGetPlayer(out Player player))
             {
                 player.Unban();
                 Console.WriteLine($"Игрок {player.Name} разбанен!");
@@ -153,41 +153,36 @@ namespace dzkurs
         public void RemovePlayer()
         {
             Player player = new Player(0, null, 0, false);
-            string userInput = null;
-            int tempNumber = 0;
 
-            if (_TryGetPlayer(out player))
+            if (TryGetPlayer(out player))
             {
-                Console.WriteLine($"Игрок {_players[tempNumber].Name} удалён!");
-                _players.Remove(_players[tempNumber]);
+                Console.WriteLine($"Игрок {player.Name} удалён!");
+                _players.Remove(player);
             }
             else
             {
                 Console.WriteLine("Ошибка ввода!");
             }
         }
-        
-        private bool _TryGetPlayer(out Player player)
+
+        private bool TryGetPlayer(out Player player)
         {
             string userInput;
-            int tempNumber;
-            player = null;
-            bool isFound = true;
             Console.WriteLine("Введите ID игрока");
+            bool isFound = false;
             int value;
 
             userInput = Console.ReadLine();
 
             int.TryParse(userInput, out value);
+            player = new Player(0, null, 0, false);
 
             for (int i = 0; i < _players.Count; i++)
             {
                 if (_players[i].Id == value)
                 {
-                    isFound = true;
-                    tempNumber = _players[i].Id;
                     player = _players[i];
-                    return true;
+                    isFound = true;
                 }
             }
 
